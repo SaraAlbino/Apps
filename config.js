@@ -4,5 +4,5 @@ const MICHELLE_CONFIG = {
   owner: "SaraAlbino",
   repo:  "michelle",
   branch: "main",
-  pat:   "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"
+  pat:   "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"
 };
