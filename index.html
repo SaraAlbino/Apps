@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Michelle">
+<meta name="theme-color" content="#534AB7">
+<link rel="manifest" href="manifest.json">
+<title>Michelle</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --purple: #534AB7;
+    --purple-light: #EEEDFE;
+    --purple-mid: #AFA9EC;
+    --purple-dark: #3C3489;
+    --teal: #0F6E56;
+    --teal-light: #E1F5EE;
+    --teal-mid: #5DCAA5;
+    --blue: #185FA5;
+    --blue-light: #E6F1FB;
+    --blue-mid: #85B7EB;
+    --amber: #854F0B;
+    --amber-light: #FAEEDA;
+    --amber-mid: #EF9F27;
+    --coral: #993C1D;
+    --coral-light: #FAECE7;
+    --coral-mid: #F0997B;
+    --gray: #444441;
+    --gray-light: #F1EFE8;
+    --gray-mid: #B4B2A9;
+    --red: #A32D2D;
+    --red-light: #FCEBEB;
+    --green: #3B6D11;
+    --green-light: #EAF3DE;
+    --bg: #f5f4f0;
+    --card: #ffffff;
+    --text: #1a1a18;
+    --text2: #5a5a57;
+    --text3: #8a8a86;
+    --border: rgba(0,0,0,0.08);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --purple: #AFA9EC;
+      --purple-light: #26215C;
+      --purple-mid: #534AB7;
+      --purple-dark: #CECBF6;
+      --teal: #5DCAA5;
+      --teal-light: #04342C;
+      --blue: #85B7EB;
+      --blue-light: #042C53;
+      --amber: #EF9F27;
+      --amber-light: #412402;
+      --coral: #F0997B;
+      --coral-light: #4A1B0C;
+      --gray: #D3D1C7;
+      --gray-light: #2C2C2A;
+      --red: #F09595;
+      --red-light: #501313;
+      --green: #97C459;
+      --green-light: #173404;
+      --bg: #1a1a18;
+      --card: #242422;
+      --text: #f0efe8;
+      --text2: #a0a09c;
+      --text3: #6a6a66;
+      --border: rgba(255,255,255,0.08);
+    }
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100dvh;
+    padding-bottom: 80px;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--purple);
+    color: #fff;
+    padding: 52px 20px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-row { display: flex; align-items: center; justify-content: space-between; }
+  .header-title { font-size: 22px; font-weight: 600; letter-spacing: -0.3px; }
+  .header-date { font-size: 13px; opacity: 0.75; margin-top: 2px; }
+  .refresh-btn {
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: #fff;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    transition: background 0.15s;
+    flex-shrink: 0;
+  }
+  .refresh-btn:active { background: rgba(255,255,255,0.3); }
+  .refresh-btn.spinning { animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* NAV TABS */
+  nav {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    position: sticky;
+    top: 84px;
+    z-index: 99;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  .tab {
+    flex: 1;
+    min-width: 80px;
+    padding: 12px 8px 10px;
+    border: none;
+    background: none;
+    color: var(--text3);
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+    white-space: nowrap;
+  }
+  .tab .icon { font-size: 20px; }
+  .tab.active { color: var(--purple); border-bottom-color: var(--purple); }
+  @media (prefers-color-scheme: dark) {
+    .tab.active { color: var(--purple-dark); border-bottom-color: var(--purple-dark); }
+  }
+
+  /* MAIN */
+  main { padding: 16px; max-width: 640px; margin: 0 auto; }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .card-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 10px;
+  }
+
+  /* STATUS BADGE */
+  .badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+    letter-spacing: 0.03em;
+  }
+  .badge-urgente { background: var(--red-light); color: var(--red); }
+  .badge-em-curso { background: var(--amber-light); color: var(--amber); }
+  .badge-pendente { background: var(--blue-light); color: var(--blue); }
+  .badge-agendado { background: var(--teal-light); color: var(--teal); }
+  .badge-todo { background: var(--gray-light); color: var(--gray); }
+  .badge-trabalhando { background: var(--purple-light); color: var(--purple-dark); }
+  .badge-submetido { background: var(--green-light); color: var(--green); }
+  .badge-exploracao { background: var(--coral-light); color: var(--coral); }
+
+  /* PLANO DO DIA */
+  .day-block {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+  .day-time {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text3);
+    min-width: 44px;
+    padding-top: 11px;
+    letter-spacing: 0.02em;
+  }
+  .day-pill {
+    flex: 1;
+    padding: 10px 13px;
+    border-radius: var(--radius-sm);
+    border-left: 3px solid;
+    background: var(--card);
+    border-top: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .day-pill.purple { border-left-color: var(--purple); }
+  .day-pill.teal   { border-left-color: var(--teal); }
+  .day-pill.blue   { border-left-color: var(--blue); }
+  .day-pill.gray   { border-left-color: var(--gray-mid); }
+  .day-pill.coral  { border-left-color: var(--coral); }
+  .day-pill.amber  { border-left-color: var(--amber); }
+  .day-task { font-size: 14px; font-weight: 500; color: var(--text); }
+  .day-sub  { font-size: 12px; color: var(--text2); margin-top: 2px; line-height: 1.4; }
+  .day-divider { border: none; border-top: 1px dashed var(--border); margin: 10px 0; }
+
+  /* TAREFAS */
+  .task-item {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .task-item:last-child { border-bottom: none; }
+  .task-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+  .task-name { font-size: 14px; font-weight: 500; color: var(--text); flex: 1; line-height: 1.4; }
+  .task-notes { font-size: 12px; color: var(--text2); line-height: 1.5; }
+  .task-prazo { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+  /* PROJETOS */
+  .project-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .project-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .project-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .project-name { font-size: 15px; font-weight: 600; color: var(--text); }
+  .project-sub { font-size: 12px; color: var(--text2); line-height: 1.5; }
+  .project-tag { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 20px; margin-top: 6px; }
+
+  /* NOTAS */
+  .note-area {
+    width: 100%;
+    min-height: 120px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    font-size: 14px;
+    color: var(--text);
+    font-family: inherit;
+    resize: vertical;
+    outline: none;
+    line-height: 1.6;
+  }
+  .note-area:focus { border-color: var(--purple); }
+  .note-save-btn {
+    margin-top: 8px;
+    background: var(--purple);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    width: 100%;
+    transition: opacity 0.15s;
+  }
+  .note-save-btn:active { opacity: 0.8; }
+  .saved-notes { margin-top: 12px; }
+  .saved-note {
+    background: var(--purple-light);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+    position: relative;
+  }
+  .note-time { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
+  .del-note {
+    position: absolute;
+    top: 8px; right: 10px;
+    background: none;
+    border: none;
+    color: var(--text3);
+    font-size: 16px;
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  /* LOADING / ERROR */
+  .loading {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text3);
+    font-size: 14px;
+  }
+  .loading .spinner {
+    width: 32px; height: 32px;
+    border: 3px solid var(--border);
+    border-top-color: var(--purple);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 12px;
+  }
+  .error-msg {
+    background: var(--red-light);
+    color: var(--red);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-size: 13px;
+    margin: 12px 0;
+    line-height: 1.5;
+  }
+  .last-updated {
+    text-align: center;
+    font-size: 11px;
+    color: var(--text3);
+    padding: 8px 0 4px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-row">
+    <div>
+      <div class="header-title">Michelle ✦</div>
+      <div class="header-date" id="header-date"></div>
+    </div>
+    <button class="refresh-btn" id="refresh-btn" aria-label="Atualizar dados" onclick="loadAll()">↻</button>
+  </div>
+</header>
+
+<nav>
+  <button class="tab active" data-tab="plano" onclick="switchTab('plano')">
+    <span class="icon">📅</span>Plano
+  </button>
+  <button class="tab" data-tab="tarefas" onclick="switchTab('tarefas')">
+    <span class="icon">✅</span>Tarefas
+  </button>
+  <button class="tab" data-tab="projetos" onclick="switchTab('projetos')">
+    <span class="icon">🗂</span>Projetos
+  </button>
+  <button class="tab" data-tab="notas" onclick="switchTab('notas')">
+    <span class="icon">📝</span>Notas
+  </button>
+</nav>
+
+<main>
+
+  <!-- PLANO DO DIA -->
+  <section class="section active" id="sec-plano">
+    <div id="plano-content"></div>
+  </section>
+
+  <!-- TAREFAS -->
+  <section class="section" id="sec-tarefas">
+    <div id="tarefas-content"></div>
+  </section>
+
+  <!-- PROJETOS -->
+  <section class="section" id="sec-projetos">
+    <div id="projetos-content"></div>
+  </section>
+
+  <!-- NOTAS RÁPIDAS -->
+  <section class="section" id="sec-notas">
+    <div class="card">
+      <div class="card-label">Nova nota</div>
+      <textarea class="note-area" id="note-input" placeholder="Escreve aqui um lembrete rápido..."></textarea>
+      <button class="note-save-btn" onclick="saveNote()">Guardar nota</button>
+    </div>
+    <div class="saved-notes" id="saved-notes"></div>
+  </section>
+
+</main>
+
+<script src="config.js"></script>
+<script>
+const API = "https://api.github.com";
+
+// ── helpers ──────────────────────────────────────────────────────────────────
+function ghHeaders() {
+  return {
+    "Authorization": `token ${MICHELLE_CONFIG.pat}`,
+    "Accept": "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28"
+  };
+}
+
+async function ghRead(path) {
+  const url = `${API}/repos/${MICHELLE_CONFIG.owner}/${MICHELLE_CONFIG.repo}/contents/${path}?ref=${MICHELLE_CONFIG.branch}`;
+  const r = await fetch(url, { headers: ghHeaders() });
+  if (!r.ok) throw new Error(`GitHub ${r.status}: ${path}`);
+  const d = await r.json();
+  return atob(d.content.replace(/\n/g, ""));
+}
+
+function loading(id) {
+  document.getElementById(id).innerHTML =
+    `<div class="loading"><div class="spinner"></div>A carregar...</div>`;
+}
+
+function showError(id, msg) {
+  document.getElementById(id).innerHTML =
+    `<div class="error-msg">⚠️ ${msg}</div>`;
+}
+
+// ── date header ───────────────────────────────────────────────────────────────
+function setDateHeader() {
+  const now = new Date();
+  const days = ["domingo","segunda-feira","terça-feira","quarta-feira","quinta-feira","sexta-feira","sábado"];
+  const months = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+  document.getElementById("header-date").textContent =
+    `${days[now.getDay()]}, ${now.getDate()} de ${months[now.getMonth()]}`;
+}
+
+// ── tab switching ─────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.tab === tab));
+  document.querySelectorAll(".section").forEach(s => s.classList.toggle("active", s.id === `sec-${tab}`));
+}
+
+// ── PLANO DO DIA (static — updated by Michelle each session) ─────────────────
+function renderPlano() {
+  const now = new Date();
+  const isToday = (h, m) => {
+    const t = now.getHours() * 60 + now.getMinutes();
+    const block = h * 60 + m;
+    return t >= block;
+  };
+
+  const blocks = [
+    { time: "08:20", color: "gray",   task: "Deixar os miúdos",            sub: "Catarina — autocarro visita de estudo · Jaime — escola" },
+    { time: "09:00", color: "purple", task: "IGI Global — leitura de aquecimento", sub: "30 min · ler v4, assinalar o que preocupa · não editar ainda", tag: "T01" },
+    { time: "09:45", color: "gray",   task: "Ginásio",                      sub: "15 min de viagem · aula 10h–11h" },
+    null,
+    { time: "11:15", color: "purple", task: "IGI Global — fechar e submeter", sub: "Corrigir o assinalado de manhã · carregar no submit · T01 fecha hoje", tag: "T01" },
+    null,
+    { time: "13:00", color: "gray",   task: "Almoço — pausa real",          sub: "" },
+    null,
+    { time: "14:00", color: "teal",   task: "Notícia HEROES/CBL → GICOM",   sub: "Rever rascunho · juntar fotografias · enviar", tag: "T15" },
+    { time: "15:30", color: "blue",   task: "Conferências / journals BIP",   sub: "Bloco leve · 2–3 destinos para o artigo BIP", tag: "T07" },
+    { time: "17:00", color: "coral",  task: "Guitarra 🎸",                   sub: "30 min · é para cumprir" },
+    { time: "18:30", color: "gray",   task: "Catarina chega",                sub: "Fim do dia de trabalho" },
+  ];
+
+  let html = `<div class="card-label" style="padding:4px 0 10px">Terça-feira · 23 junho 2026</div>`;
+  blocks.forEach(b => {
+    if (!b) { html += `<hr class="day-divider">`; return; }
+    const [h, m] = b.time.split(":").map(Number);
+    const past = isToday(h, m + 30);
+    html += `<div class="day-block" style="${past ? 'opacity:0.45' : ''}">
+      <div class="day-time">${b.time}</div>
+      <div class="day-pill ${b.color}">
+        <div class="day-task">${b.task}${b.tag ? ` <span class="badge badge-pendente" style="font-size:9px">${b.tag}</span>` : ''}</div>
+        ${b.sub ? `<div class="day-sub">${b.sub}</div>` : ''}
+      </div>
+    </div>`;
+  });
+  html += `<div class="last-updated">Plano fixo para hoje · atualizado pela Michelle</div>`;
+  document.getElementById("plano-content").innerHTML = html;
+}
+
+// ── PARSE TAREFAS.MD ─────────────────────────────────────────────────────────
+function parseTarefas(md) {
+  const lines = md.split("\n");
+  const tasks = [];
+  let inTable = false;
+  for (const line of lines) {
+    if (!line.startsWith("|")) { inTable = false; continue; }
+    const cols = line.split("|").map(c => c.trim()).filter(Boolean);
+    if (cols[0] === "ID" || cols[0].startsWith("---")) continue;
+    if (cols.length >= 4) {
+      inTable = true;
+      tasks.push({ id: cols[0], name: cols[1], prazo: cols[2], estado: cols[3], notes: cols[4] || "" });
+    }
+  }
+  return tasks;
+}
+
+function estadoBadge(estado) {
+  const e = estado.toLowerCase().replace(/[^a-záéíóúãõç ]/g, "").trim();
+  if (e.includes("urgente"))        return `<span class="badge badge-urgente">Urgente</span>`;
+  if (e.includes("em curso"))       return `<span class="badge badge-em-curso">Em curso</span>`;
+  if (e.includes("pendente"))       return `<span class="badge badge-pendente">Pendente</span>`;
+  if (e.includes("agendado"))       return `<span class="badge badge-agendado">Agendado</span>`;
+  if (e.includes("submetido"))      return `<span class="badge badge-submetido">Submetido</span>`;
+  if (e.includes("trabalhar") || e.includes("trabalhando")) return `<span class="badge badge-trabalhando">A trabalhar</span>`;
+  if (e.includes("explora"))        return `<span class="badge badge-exploracao">Exploração</span>`;
+  if (e.includes("fechado"))        return `<span class="badge badge-todo" style="opacity:0.5">Fechado</span>`;
+  return `<span class="badge badge-todo">${estado}</span>`;
+}
+
+function renderTarefas(md) {
+  const tasks = parseTarefas(md).filter(t => !t.estado.toLowerCase().includes("fechado"));
+  if (!tasks.length) { document.getElementById("tarefas-content").innerHTML = `<div class="loading">Sem tarefas activas.</div>`; return; }
+
+  // sort: urgente/em curso first
+  const order = ["urgente","em curso","pendente","agendado","a trabalhar","exploração","to_do","submetido"];
+  tasks.sort((a,b) => {
+    const ai = order.findIndex(o => a.estado.toLowerCase().includes(o));
+    const bi = order.findIndex(o => b.estado.toLowerCase().includes(o));
+    return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+  });
+
+  let html = `<div class="card">`;
+  tasks.forEach(t => {
+    const noteClean = t.notes.replace(/\*\*/g,"").replace(/`[^`]*`/g, m => m.replace(/`/g,""));
+    html += `<div class="task-item">
+      <div class="task-row">
+        <div class="task-name">${t.id} — ${t.name.replace(/\*\*/g,"")}</div>
+        ${estadoBadge(t.estado)}
+      </div>
+      ${noteClean ? `<div class="task-notes">${noteClean}</div>` : ''}
+      ${t.prazo && t.prazo !== "—" ? `<div class="task-prazo">📅 ${t.prazo}</div>` : ''}
+    </div>`;
+  });
+  html += `</div>`;
+  const ts = new Date().toLocaleTimeString("pt-PT", {hour:"2-digit",minute:"2-digit"});
+  html += `<div class="last-updated">Actualizado às ${ts} · fonte: GitHub</div>`;
+  document.getElementById("tarefas-content").innerHTML = html;
+}
+
+// ── PROJETOS (from tarefas + curated) ────────────────────────────────────────
+function renderProjetos(md) {
+  const projects = [
+    {
+      name: "IGI Global — Peer Review",
+      dot: "#E24B4A",
+      tag: "Investigação", tagBg: "#FCEBEB", tagColor: "#A32D2D",
+      desc: "Capítulo «Digital Twins and Metaverse in Hospitality». Rascunho v4 feito. Submeter esta semana.",
+      estado: "Em curso · prazo urgente"
+    },
+    {
+      name: "HEROES — WP10 Disseminação",
+      dot: "#1D9E75",
+      tag: "HEROES", tagBg: "#E1F5EE", tagColor: "#0F6E56",
+      desc: "Notícia CBL para GICOM pendente (T15). Reunião internacional maio 2027 a planear.",
+      estado: "Activo"
+    },
+    {
+      name: "BIP Paper",
+      dot: "#378ADD",
+      tag: "Investigação", tagBg: "#E6F1FB", tagColor: "#185FA5",
+      desc: "Identificar conferência ou journal alvo (T07). Marco enviou 3 ficheiros-chave em junho.",
+      estado: "Pendente"
+    },
+    {
+      name: "Turismo Criativo — Livro",
+      dot: "#534AB7",
+      tag: "Empreendedorismo", tagBg: "#EEEDFE", tagColor: "#3C3489",
+      desc: "1.º livro sobre turismo criativo no Baixo Alentejo (T11). Título e estrutura a definir.",
+      estado: "A trabalhar"
+    },
+    {
+      name: "Transição pós-IPBeja / Buinho",
+      dot: "#EF9F27",
+      tag: "Pessoal", tagBg: "#FAEEDA", tagColor: "#854F0B",
+      desc: "Sessão de reflexão estratégica prevista para 4.ª feira (T16). Horizonte 2027-28.",
+      estado: "A arrancar"
+    },
+    {
+      name: "CTeSP — Apresentações finais",
+      dot: "#5F5E5A",
+      tag: "Ensino", tagBg: "#F1EFE8", tagColor: "#444441",
+      desc: "Apresentações Shark Tank em 29 de junho. Preparar critérios de avaliação e júri (T03).",
+      estado: "Agendado"
+    },
+  ];
+
+  let html = "";
+  projects.forEach(p => {
+    html += `<div class="project-card">
+      <div class="project-header">
+        <div class="project-dot" style="background:${p.dot}"></div>
+        <div class="project-name">${p.name}</div>
+      </div>
+      <div class="project-sub">${p.desc}</div>
+      <div>
+        <span class="project-tag" style="background:${p.tagBg};color:${p.tagColor}">${p.tag}</span>
+        <span class="project-tag" style="background:var(--gray-light);color:var(--gray);margin-left:4px">${p.estado}</span>
+      </div>
+    </div>`;
+  });
+  const ts = new Date().toLocaleTimeString("pt-PT", {hour:"2-digit",minute:"2-digit"});
+  html += `<div class="last-updated">Actualizado às ${ts}</div>`;
+  document.getElementById("projetos-content").innerHTML = html;
+}
+
+// ── NOTAS RÁPIDAS (localStorage) ─────────────────────────────────────────────
+function loadNotes() {
+  const notes = JSON.parse(localStorage.getItem("michelle-notes") || "[]");
+  const container = document.getElementById("saved-notes");
+  if (!notes.length) { container.innerHTML = ""; return; }
+  container.innerHTML = notes.map((n, i) =>
+    `<div class="saved-note">
+      <div class="note-time">${n.time}</div>
+      <button class="del-note" onclick="deleteNote(${i})" aria-label="Apagar nota">×</button>
+      ${n.text}
+    </div>`
+  ).join("");
+}
+
+function saveNote() {
+  const input = document.getElementById("note-input");
+  const text = input.value.trim();
+  if (!text) return;
+  const notes = JSON.parse(localStorage.getItem("michelle-notes") || "[]");
+  const now = new Date();
+  notes.unshift({ text, time: now.toLocaleString("pt-PT", {day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}) });
+  localStorage.setItem("michelle-notes", JSON.stringify(notes));
+  input.value = "";
+  loadNotes();
+}
+
+function deleteNote(i) {
+  const notes = JSON.parse(localStorage.getItem("michelle-notes") || "[]");
+  notes.splice(i, 1);
+  localStorage.setItem("michelle-notes", JSON.stringify(notes));
+  loadNotes();
+}
+
+// ── LOAD ALL ──────────────────────────────────────────────────────────────────
+async function loadAll() {
+  const btn = document.getElementById("refresh-btn");
+  btn.classList.add("spinning");
+
+  renderPlano();
+  loadNotes();
+
+  loading("tarefas-content");
+  loading("projetos-content");
+
+  try {
+    const tarefasMd = await ghRead("tarefas.md");
+    renderTarefas(tarefasMd);
+    renderProjetos(tarefasMd);
+  } catch(e) {
+    const msg = e.message.includes("401") ? "Token inválido — verifica o PAT no config.js" :
+                e.message.includes("404") ? "Repositório não encontrado — verifica OWNER/REPO" :
+                `Erro: ${e.message}`;
+    showError("tarefas-content", msg);
+    showError("projetos-content", msg);
+  } finally {
+    btn.classList.remove("spinning");
+  }
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("./sw.js").catch(() => {});
+}
+
+setDateHeader();
+loadAll();
+</script>
+</body>
+</html>
